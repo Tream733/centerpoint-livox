@@ -1,0 +1,69 @@
+TRT_MODE: fp16
+
+EnableDebug: true	
+
+CLASS_NAMES: ['Vehicle', 'Pedestrian', 'Bicycle']
+
+DATA_CONFIG:
+    POINT_CLOUD_RANGE: [0, -44.8, -2, 224, 44.8, 4]
+    LOAD_DIM: 4
+    USE_DIM: 4
+    LOAD_BATCH: 1
+    DATA_PROCESSOR:
+        NAME: transform_points_to_voxels
+        VOXEL_SIZE: [ 0.2, 0.2, 0.2 ]
+
+MODEL:
+    NAME: CenterPoint
+    
+    VFE:
+        NAME: BoolMap
+
+    BACKBONE_2D:
+        NAME: ResBEVBackboneConcat
+        INPUT_CHANNELS: 30
+        LAYER_NUMS: [ 2, 2, 3, 3, 2 ]
+        LAYER_STRIDES: [ 2, 2, 2, 2, 2 ]
+        NUM_FILTERS: [ 32, 48, 64, 96, 128]
+        UPSAMPLE_STRIDES: [ 2, 4, 8, 16, 32]
+
+    DENSE_HEAD:
+        NAME: CenterHead
+        INPUT_CHANNELS: 128
+        NUM_CLASS: 3
+        CLASS_NAMES: ['Vehicle','Bicycle','Pedestrian']
+        SEPARATE_HEAD_CFG:
+            INPUT_CHANNELS: 64
+            INIT_BIAS: -2.19
+            USE_BIAS: True
+            HEAD_ORDER: ['center', 'center_z', 'dim', 'rot']
+            HEAD_DICT: {
+                'center': {'out_channels': 2, 'num_conv': 1},
+                'center_z': {'out_channels': 1, 'num_conv': 1},
+                'dim': {'out_channels': 3, 'num_conv': 1},
+                'rot': {'out_channels': 2, 'num_conv': 1},
+                'hm': {'out_channels': 3, 'num_conv': 1}
+            }
+        TARGET_ASSIGNER_CONFIG:
+            FEATURE_MAP_STRIDE: 1
+            SCORE_DIM: 1
+            LABEL_DIM: 1
+            NUM_MAX_OBJS: 500
+            GAUSSIAN_OVERLAP: 0.1
+            MIN_RADIUS: 2
+        LOSS_CONFIG:
+            LOSS_WEIGHTS: {
+                'cls_weight': 1.0,
+                'loc_weight': 2.0,
+                'code_weights': [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+            } 
+    POST_PROCESSING:
+        POST_CENTER_LIMIT_RANGE: [0, -44.8, -2, 224, 44.8, 4]
+        SCORE_THRESH: [0.2, 0.3, 0.3]
+        BOX_SIZE: 7
+        MAX_OBJ_PER_SAMPLE: 500
+        NMS_CONFIG:
+            NMS_TYPE: nms_gpu
+            NMS_THRESH: 0.1
+            NMS_PRE_MAXSIZE: 4096
+            NMS_POST_MAXSIZE: 500

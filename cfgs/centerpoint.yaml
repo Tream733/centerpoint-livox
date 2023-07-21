@@ -1,0 +1,7 @@
+LoadDim: 4
+UseDim: 4
+EnableDebug: false
+TRT_MODE: fp16 # fp32, fp16
+UseOnnx: true
+RpnFile: /home/txy/wspace/src/detection_lidar/centerpoint/model/modified_infered_rpn_sim.onnx
+ModelConfig: /home/txy/wspace/src/detection_lidar/centerpoint/cfgs/centerpoint_boolmap_0.2.yaml
