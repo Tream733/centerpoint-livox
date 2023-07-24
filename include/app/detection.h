@@ -55,7 +55,7 @@ private:
     std::string rpn_file_;
     std::string centerpoint_config_;
     std::string file_name_;
-    std::string param_path_ = "/home/txy/wspace/src/detection_lidar/centerpoint/cfgs/centerpoint.yaml";
+    std::string param_path_ = "/home/txy/wspace/param/centerpoint.yaml"; 
 
     int pub_count_ = 0;
 

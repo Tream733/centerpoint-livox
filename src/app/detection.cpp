@@ -74,12 +74,12 @@ void Detection::makeOutput(std::vector<Box> &out_detections,rclcpp::Time& stamp)
         ws_msgs::msg::Bbox bbox;
         float x = out_detections[obj_index].x;
         float y = out_detections[obj_index].y;
-        float z = out_detections[obj_index].z;
+        float z = out_detections[obj_index].z - 1.8;
         float dx = out_detections[obj_index].l;
         float dy = out_detections[obj_index].w;
         float dz = out_detections[obj_index].h;
         float yaw = out_detections[obj_index].r;
-        yaw += M_PI / 2;
+        // yaw += M_PI / 2;
         yaw = std::atan2(sinf(yaw),cosf(yaw));
         yaw = - yaw;
 

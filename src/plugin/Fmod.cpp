@@ -44,14 +44,6 @@ namespace plugin
                                                 nvinfer1::IExprBuilder& exprBuilder) noexcept 
     {
         assert(outputIndex == 0);
-        std::cout<<"nbInputs      "<<nbInputs<<std::endl;
-        for(int i = 0; i<nbInputs; i++){
-            printf("input[%d]: ", i);
-            for(int j = 0; j <inputs[i].nbDims; j++) {
-                printf("%d ", inputs[i].d[j]->getConstantValue());
-            }
-            printf("\n");
-        }
         nvinfer1::DimsExprs output;
         output.nbDims = 3;
         output.d[0] = exprBuilder.constant(1);
@@ -63,15 +55,9 @@ namespace plugin
     int ModPlugin::enqueue(nvinfer1::PluginTensorDesc const* inputDesc, nvinfer1::PluginTensorDesc const* outputDesc,
              const void* const* inputs, void* const* outputs, void* workspace, cudaStream_t stream) noexcept
     {
-        int a = inputDesc[0].dims.d[0];
-        int d = inputDesc[1].dims.d[0];
-        int c = inputDesc[1].dims.d[1];
         void const* inputData = inputs[0];
-        int* test = (int*)inputData;
-        // std::cout<<"---------------------------------------------"<<bias_<<std::endl;
         void* outputData = outputs[0];
         int status =  ModInference(stream, batch_*hotmap_dim_*nmo_, bias_,inputData, outputData);
-        int * tessst = (int*)outputs[0];
         return status;
     }
 
