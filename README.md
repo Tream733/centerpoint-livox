@@ -1,6 +1,6 @@
 # centerpoint-livox
 CenterPoint model trained on livox dataset, and deployed with TensorRT on ros2
-本仓库是将https://github.com/Livox-SDK/livox_detection.git   仓库中python torch工程进行了tensorrt部署，目前在3060上耗时为25ms左右。
+本仓库是将https://github.com/Livox-SDK/livox_detection.git   仓库中python torch工程进行了tensorrt部署，目前在3060笔记本电脑上耗时为25ms左右。
 
 工作思路：
   pth转onnx转tensorrt；
