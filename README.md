@@ -26,7 +26,7 @@ TensorRT and cuda are necessary conditions for running centerpoint
 
 # Performance in FP16
 ```
-| Function(unit:ms) | NVIDIA RTX A4000 Laptop GPU | NVIDIA Jetson AGX Orin      |
+| Function(unit:ms) | NVIDIA RTX 3060 Laptop GPU | NVIDIA Jetson AGX Orin      |
 | ----------------- | --------------------------- | --------------------------- |
 | Preprocess        | 0.044534 ms                 | 0.54815  ms                 |
 | Rpn               | 25.0291  ms                 | 36.5103  ms                 |
