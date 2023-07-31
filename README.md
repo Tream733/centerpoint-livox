@@ -21,7 +21,7 @@ You can also get the onnx file by yourself through programming, but you have to 
 TensorRT and cuda are necessary conditions for running centerpoint
 
 # Environments
-* Nvidia RTX 3060 Laptop GPU
+* Nvidia RTX 3060 Laptop GPU  
 * Cuda11 + cuDNN8 + tensorrt8
 
 # Performance in FP16
