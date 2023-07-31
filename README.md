@@ -1,16 +1,44 @@
-# centerpoint-livox  
-CenterPoint model trained on livox dataset, and deployed with TensorRT on ros2  
-本仓库是将https://github.com/Livox-SDK/livox_detection.git   仓库中python torch工程进行了tensorrt部署，目前在3060笔记本电脑上耗时为25ms左右。  
+# centerpoint-livox: An Lidar Object Detection project implemented by TensorRT
+CenterPoint model trained on livox dataset, and deployed with TensorRT on ros2. Code is written according to the [project][livox_detection].
 
-工作思路：  
-  pth转onnx转tensorrt；  
-存在问题：  
-  1、模型转onnx，atan2算子onnx不支持；  
-  2、mask操作带来Gather和NoZero操作；  
-  3、mod算子tensorrt不支持；  
-  4、atan2算子tensorrt不支持；  
-解决方法：  
-  1、模型生成时添加 operator_export_type=torch.onnx.OperatorExportTypes.ONNX_ATEN_FALLBACK，先生成模型，后续再解决tensorrt不支持的问题；  
-  2、将mask写在后处理cuda c中；  
-  3、编写mod trt算子；  
-  4、编写atan2 trt算子。  
+Overall inference has three phases:
+* Conver points cloud into boolmap;
+  boolmap: use true or fasle to describe voxels
+  (N,5)-->(1,30,448,1120);  5D: index in one batch, x, y, z, i
+* Run rpn backbone TensorRT engine to get 3D-detection raw data
+  (1,30,448,1120)-->box:(500,7),score:(500),label:(500)
+* do mask and nms on cuda c to get filtered output
+  box:(500,7),score:(500),label:(500)-->output_box:(num,7),output_score:(num),output_label:(num)
+  
+# Data
+the project is running inference on [LivoxOpenDataSet](https://www.livoxtech.com/cn/dataset).
+
+# Model
+The .pt file you can get in this project. the onnx file is provided by this project.
+You can also get the onnx file by yourself through programming, but you have to consider the problem that onnx does not support atan2.
+
+# Prerequisites
+TensorRT and cuda are necessary conditions for running centerpoint
+
+# Environments
+* Nvidia RTX 3060 Laptop GPU
+* Cuda11 + cuDNN8 + tensorrt8
+
+# Performance in FP16
+```
+| Function(unit:ms) | NVIDIA RTX A4000 Laptop GPU | NVIDIA Jetson AGX Orin      |
+| ----------------- | --------------------------- | --------------------------- |
+| Preprocess        | 0.044534 ms                 | 0.54815  ms                 |
+| Rpn               | 25.0291  ms                 | 36.5103  ms                 |
+| Postprocess       | 0.80967 ms                  | 1.35985  ms                 |
+| Summary           | 25.8914  ms                 | 38.4183  ms                 |
+```
+# Visualization
+
+
+# References
+- [Center-based 3D Object Detection and Tracking](https://arxiv.org/abs/2006.11275)
+- [mmdetection3d](https://github.com/Tartisan/mmdetection3d)
+- [tianweiy/CenterPoint](https://github.com/tianweiy/CenterPoint)
+- [livox-SDK/livox_detection](https://github.com/Livox-SDK/livox_detection.git)
+
