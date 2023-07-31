@@ -2,13 +2,13 @@
 CenterPoint model trained on livox dataset, and deployed with TensorRT on ros2. Code is written according to the [project][livox_detection].
 
 Overall inference has three phases:
-* Conver points cloud into boolmap;
-  boolmap: use true or fasle to describe voxels
-  (N,5)-->(1,30,448,1120);  5D: index in one batch, x, y, z, i
-* Run rpn backbone TensorRT engine to get 3D-detection raw data
-  (1,30,448,1120)-->box:(500,7),score:(500),label:(500)
-* do mask and nms on cuda c to get filtered output
-  box:(500,7),score:(500),label:(500)-->output_box:(num,7),output_score:(num),output_label:(num)
+* Conver points cloud into boolmap;  
+  boolmap: use true or fasle to describe voxels  
+  (N,5)-->(1,30,448,1120);  5D: index in one batch, x, y, z, i  
+* Run rpn backbone TensorRT engine to get 3D-detection raw data  
+  (1,30,448,1120)-->box:(500,7),score:(500),label:(500)  
+* do mask and nms on cuda c to get filtered output  
+  box:(500,7),score:(500),label:(500)-->output_box:(num,7),output_score:(num),output_label:(num)  
   
 # Data
 the project is running inference on [LivoxOpenDataSet](https://www.livoxtech.com/cn/dataset).
