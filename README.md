@@ -28,10 +28,10 @@ TensorRT and cuda are necessary conditions for running centerpoint
 ```
 | Function(unit:ms) | NVIDIA RTX 3060 Laptop GPU | NVIDIA Jetson AGX Orin      |
 | ----------------- | --------------------------- | --------------------------- |
-| Preprocess        | 0.044534 ms                 | 0.10333  ms                 |
-| Rpn               | 25.0291  ms                 | 52.2295  ms                 |
-| Postprocess       | 0.80967 ms                  | 1.61343  ms                 |
-| Summary           | 25.8914  ms                 | 53.9586  ms                 |
+| Preprocess        | 0.044534 ms                 | 0.323782  ms                 |
+| Rpn               | 25.0291  ms                 | 48.5475  ms                 |
+| Postprocess       | 0.80967 ms                  | 1.8511  ms                 |
+| Summary           | 25.8914  ms                 | 50.7353  ms                 |
 ```
 # Visualization
 ![Visualization](output.gif)
