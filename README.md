@@ -34,7 +34,7 @@ TensorRT and cuda are necessary conditions for running centerpoint
 | Summary           | 25.8914  ms                 | 38.4183  ms                 |
 ```
 # Visualization
-
+![Visualization](output.gif)
 
 # References
 - [Center-based 3D Object Detection and Tracking](https://arxiv.org/abs/2006.11275)
