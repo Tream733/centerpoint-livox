@@ -23,6 +23,7 @@ TensorRT and cuda are necessary conditions for running centerpoint
 # Environments
 * Nvidia RTX 3060 Laptop GPU  
 * Cuda11 + cuDNN8 + tensorrt8
+* ws_msgs here: https://github.com/Tream733/ws_msgs
 
 # Performance in FP16
 ```
