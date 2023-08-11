@@ -7,7 +7,7 @@
 #include <string>
 #include <cublas_v2.h>
 #include <cuda.h>
-#include <cudnn.h>
+// #include <cudnn.h>
 #include "common.h"
 #include <cassert>
 #include "plugin/Mod.h"

@@ -1,5 +1,5 @@
 # centerpoint-livox: An Lidar Object Detection project implemented by TensorRT
-CenterPoint model trained on livox dataset, and deployed with TensorRT on ros2. Code is written according to the [project][livox_detection].
+CenterPoint model trained on livox dataset and deployed with TensorRT on ros2. Code is written according to the [project](https://github.com/Livox-SDK/livox_detection.git).
 
 Overall inference has three phases:
 * Conver points cloud into boolmap;  

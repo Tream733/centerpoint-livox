@@ -66,6 +66,6 @@ class PostprocessCuda {
     long* host_keep_data_ ;
     float nms_overlap_thresh_;
     std::vector<Box> output_;
-    float score_thresh_[3] = {0.2f,0.3f,0.3f};
+    float score_thresh_[3] = {0.2f,0.5f,0.5f};
     std::unique_ptr<Iou3dNmsCuda> iou3d_nms_cuda_;
 };

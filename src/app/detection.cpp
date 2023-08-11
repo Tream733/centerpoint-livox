@@ -69,6 +69,7 @@ void Detection::makeOutput(std::vector<Box> &out_detections,rclcpp::Time& stamp)
     int obj_index;
     bbox_array_.header.frame_id = "livox";
     bbox_array_.header.stamp = stamp;
+    bbox_array_.source_type = 2;
     bbox_array_.boxes.clear();
     for(obj_index = 0; obj_index < num_objects; obj_index++) {
         ws_msgs::msg::Bbox bbox;
@@ -79,15 +80,11 @@ void Detection::makeOutput(std::vector<Box> &out_detections,rclcpp::Time& stamp)
         float dy = out_detections[obj_index].w;
         float dz = out_detections[obj_index].h;
         float yaw = out_detections[obj_index].r;
-        // yaw += M_PI / 2;
         yaw = std::atan2(sinf(yaw),cosf(yaw));
-        yaw = - yaw;
+        // yaw = - yaw;
 
         float top_z = z + dz ;
-        float bot_Z = z;
-        // std::cout<<"-------------------------------------------"<<std::endl;
-        // std::cout<<"  x     y    z     dx    dy    dz   :   "<<x<<"  "<<y<<"    "<<z<<"     "<<dx<<"     "<<dy<<"     "<<dz<<std::endl;
-        
+        float bot_Z = z;     
         float c_s = cos(yaw);
         float s_s = sin(yaw);
         bbox.center.x = x;
@@ -134,6 +131,5 @@ void Detection::makeOutput(std::vector<Box> &out_detections,rclcpp::Time& stamp)
         bbox_array_.boxes.push_back(bbox);
     }
     pub_bbox_array_->publish(bbox_array_);
-
     std::cout<<"  ------------publish   ok     index--------- "<< ++pub_count_<<"   detected objects:  "<<num_objects<<std::endl;
 }

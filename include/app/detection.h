@@ -18,7 +18,6 @@
 #include <deque>
 #include <chrono>
 
-
 using Bbox = ws_msgs::msg::Bbox;
 using bboxArray = ws_msgs::msg::BboxArray;
 static size_t BoxFeature = 7;
@@ -60,6 +59,8 @@ private:
     int pub_count_ = 0;
 
     int sub_count_ = 0;
+
+    std::vector<std::string> class_names_ = {"car","bicycle","pedestrians"};
 
 };
 

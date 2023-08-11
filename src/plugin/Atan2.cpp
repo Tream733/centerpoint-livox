@@ -19,13 +19,13 @@ namespace plugin
         : batch_(1)
         , nmo_(500)
     {
-        std::cout<<" ModPlugin::ModPlugin 1 "<<std::endl;
+        //std::cout<<" ModPlugin::ModPlugin 1 "<<std::endl;
     }
 
     Atan2::Atan2(void const* serialData, size_t serialLength) 
     {
-        std::cout<<" Atan2::Atan2 2 "<<std::endl;
-        std::cout<<"---------------------"<<serialLength<<std::endl;
+       // std::cout<<" Atan2::Atan2 2 "<<std::endl;
+        //std::cout<<"---------------------"<<serialLength<<std::endl;
         char const* d = reinterpret_cast<char const*>(serialData);
         char const* a = d;
         batch_ = read<int>(d);
@@ -41,14 +41,14 @@ namespace plugin
                                                 nvinfer1::IExprBuilder& exprBuilder) noexcept 
     {
         assert(outputIndex == 0);
-        std::cout<<"nbInputs      "<<nbInputs<<std::endl;
-        for(int i = 0; i<nbInputs; i++){
-            printf("input[%d]: ", i);
-            for(int j = 0; j <inputs[i].nbDims; j++) {
-                printf("%d ", inputs[i].d[j]->getConstantValue());
-            }
-            printf("\n");
-        }
+        //std::cout<<"nbInputs      "<<nbInputs<<std::endl;
+        // for(int i = 0; i<nbInputs; i++){
+        //     printf("input[%d]: ", i);
+        //     for(int j = 0; j <inputs[i].nbDims; j++) {
+        //         printf("%d ", inputs[i].d[j]->getConstantValue());
+        //     }
+        //     printf("\n");
+        // }
         nvinfer1::DimsExprs output;
         output.nbDims = 3;
         output.d[0] = exprBuilder.constant(1);
@@ -78,7 +78,7 @@ namespace plugin
         char *d = reinterpret_cast<char *>(buffer), *a = d;
         write(d, batch_);
         assert(d == a+ getSerializationSize());
-        std::cout<<"ModPlugin::serialize"<<std::endl;
+        //std::cout<<"ModPlugin::serialize"<<std::endl;
     }
 
     bool Atan2::supportsFormatCombination(int pos, const nvinfer1::PluginTensorDesc* inOut,
@@ -179,7 +179,7 @@ namespace plugin
     */
 
     Atan2PluginCreator::Atan2PluginCreator() {
-        std::cout<< "Atan2PluginCreator::Atan2PluginCreator"<<std::endl;
+        //std::cout<< "Atan2PluginCreator::Atan2PluginCreator"<<std::endl;
         mPluginAttributes.clear();
         mFC.nbFields = mPluginAttributes.size();
         mFC.fields = mPluginAttributes.data();
@@ -187,44 +187,44 @@ namespace plugin
 
     const char* Atan2PluginCreator::getPluginName() const noexcept
     {
-        std::cout<< "Atan2PluginCreator::getPluginName"<<std::endl;
+        //std::cout<< "Atan2PluginCreator::getPluginName"<<std::endl;
         return PLUGIN_NAME;
     }
 
     const char* Atan2PluginCreator::getPluginVersion() const noexcept 
     {
-        std::cout<< "Atan2PluginCreator::getPluginVersion"<<std::endl;
+        //std::cout<< "Atan2PluginCreator::getPluginVersion"<<std::endl;
         return PLUGIN_VERSION;
     }
  
     const PluginFieldCollection* Atan2PluginCreator::getFieldNames() noexcept
     {
-         std::cout<< "Atan2PluginCreator::getFieldNames"<<std::endl;
+        // std::cout<< "Atan2PluginCreator::getFieldNames"<<std::endl;
         return &mFC;
     }
 
     IPluginV2DynamicExt* Atan2PluginCreator::createPlugin(const char* name, const PluginFieldCollection* fc) noexcept
     {
-        std::cout<< "Atan2PluginCreator::createPlugin"<<std::endl;
+        //std::cout<< "Atan2PluginCreator::createPlugin"<<std::endl;
         return new Atan2();
     }
 
     IPluginV2DynamicExt* Atan2PluginCreator::deserializePlugin(
         const char* name, const void* serialData, size_t serialLength) noexcept
     {
-        std::cout<< "Atan2PluginCreator::deserializePlugin"<<std::endl;
+        //std::cout<< "Atan2PluginCreator::deserializePlugin"<<std::endl;
         return new Atan2(serialData,serialLength);
     }
 
     void Atan2PluginCreator::setPluginNamespace(const char* libNamespace) noexcept
     {
-        std::cout<< "Atan2PluginCreator::setPluginNamespace"<<std::endl;
+        //std::cout<< "Atan2PluginCreator::setPluginNamespace"<<std::endl;
         mNamespace = libNamespace;
     }
 
     const char* Atan2PluginCreator::getPluginNamespace() const noexcept
     {
-        std::cout<< "Atan2PluginCreator::getPluginNamespace"<<std::endl;
+        //std::cout<< "Atan2PluginCreator::getPluginNamespace"<<std::endl;
         return mNamespace.c_str();
     }
 

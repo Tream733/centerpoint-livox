@@ -2,7 +2,6 @@
 #include "preprocess.h"
 #include "common.h"
 
-
 __device__ void warpReduce(volatile float* sdata, int ith_point, int axis) {
   sdata[ith_point * blockDim.y + axis] +=
       sdata[(ith_point + 8) * blockDim.y + axis];
@@ -13,7 +12,6 @@ __device__ void warpReduce(volatile float* sdata, int ith_point, int axis) {
   sdata[ith_point * blockDim.y + axis] +=
       sdata[(ith_point + 1) * blockDim.y + axis];
 }
-
 
 __global__ void bool_map_kernel(const float* dev_points,
                         const int in_num_points,

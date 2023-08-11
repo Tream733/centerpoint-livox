@@ -70,7 +70,7 @@ __global__ void BoxFilterKernel(const float* score_thresh,
   int cur_label = pred_labels[th_i];
   float cur_score = pred_scores[th_i]; 
   if ((x > min_x_range) && (x < max_x_range) && (y > min_y_range) &&
-     (y < max_y_range) && (z > min_z_range) && (z < max_z_range) ) {
+     (y < max_y_range) && (z > min_z_range) && (z < max_z_range)) {
       int flag = 1;
       int out_flag = 1;
     for(int i = 0; i< 3; i++) {
@@ -115,8 +115,6 @@ PostprocessCuda::PostprocessCuda( const float min_x_range,
                                   ,nms_overlap_thresh_(nms_overlap_thresh)
 {
   std::cout<<"--------------PostprocessCuda---------------------"<<std::endl;
-  // std::cout<<"-----------------------------"<<max_obj_<<"     "<<kBoxBlockSize<<std::endl;
-  
   GPU_CHECK(cudaMalloc((void**)&dev_res_score_, sizeof(float) * max_obj_));
   GPU_CHECK(cudaMalloc((void**)&dev_res_cls_, sizeof(int) * max_obj_));
   GPU_CHECK(cudaMalloc((void**)&dev_res_box_, sizeof(float) * max_obj_ * kBoxBlockSize));
@@ -142,7 +140,6 @@ PostprocessCuda::PostprocessCuda( const float min_x_range,
   GPU_CHECK(cudaMemset(host_keep_data_, 0L, sizeof(long) * max_obj_));
 
   iou3d_nms_cuda_.reset(new Iou3dNmsCuda(nms_overlap_thresh_));
-
 }
 
 void PostprocessCuda::DoPostprocessCuda(
@@ -161,32 +158,23 @@ void PostprocessCuda::DoPostprocessCuda(
   GPU_CHECK(cudaMalloc((void**)&score_thresh, sizeof(float) * 3));
   GPU_CHECK(cudaMemcpy(score_thresh, score_thresh_, sizeof(int), cudaMemcpyHostToDevice));
 
-
   int mum_block = DIVUP(max_obj, NUM_THREADS);
   cudaDeviceSynchronize();
-  // std::cout<<"======================= :  "<<min_x_range_<<"   "<<min_y_range_<<"   "<<min_z_range_
-                                  // <<"    "<<max_x_range_<<"    "<<max_y_range_<<"   "<<max_z_range_<<std::endl;
   BoxFilterKernel<<<mum_block,NUM_THREADS>>>(score_thresh,min_x_range_,min_y_range_,min_z_range_,
                                 (max_x_range_-0.01),(max_y_range_ - 0.01),(max_z_range_-0.01),max_obj_,
                                 pred_scores,pred_labels,pred_bbox,
-                                 dev_res_score_,dev_res_cls_,dev_res_box_,dev_res_box_num_);
-  // std::cout<<" ----------------------num-----------------------:   "<< max_obj_<<std::endl;
+                                dev_res_score_,dev_res_cls_,dev_res_box_,dev_res_box_num_);
   int box_num_pre = 0;
   GPU_CHECK(cudaMemcpy(&box_num_pre, dev_res_box_num_, sizeof(int), cudaMemcpyDeviceToHost));
-  // std::cout<<" ----------------------num-----------------------:   "<<box_num_pre<<"    "<< max_obj_<<std::endl;
-  // DEVICE_SAVE<float>(pred_scores,  500, 1,"test_11.txt");
-  // DEVICE_SAVE<int>(pred_labels,  500 , 1,"test_22.txt");
-  // DEVICE_SAVE<float>(pred_bbox,  500 , 7,"test_33.txt");
-  // DEVICE_SAVE<int>(dev_res_box_num_,  1 , 1,"test_44.txt");
   if(box_num_pre > 0) {
-      thrust::sequence(thrust::device, dev_res_sorted_indices_, dev_res_sorted_indices_ + box_num_pre);
-  thrust::sort_by_key(thrust::device,
+    thrust::sequence(thrust::device, dev_res_sorted_indices_, dev_res_sorted_indices_ + box_num_pre);
+    thrust::sort_by_key(thrust::device,
                         dev_res_score_,
                         dev_res_score_ + box_num_pre,
                         dev_res_sorted_indices_,
                         thrust::greater<float>());
 
-  int box_num_post = iou3d_nms_cuda_->DoIou3dNms(box_num_pre,
+    int box_num_post = iou3d_nms_cuda_->DoIou3dNms(box_num_pre,
                                                    dev_res_box_, 
                                                    dev_res_sorted_indices_,
                                                    host_keep_data_);
@@ -218,9 +206,7 @@ void PostprocessCuda::DoPostprocessCuda(
       out_detections.push_back(box);
     }
   } else return;
-
 }
-
 
 PostprocessCuda::~PostprocessCuda()
 {

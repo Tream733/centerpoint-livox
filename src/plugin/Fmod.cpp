@@ -21,13 +21,13 @@ namespace plugin
         , nmo_(500)
         , bias_(bias)
     {
-        std::cout<<" ModPlugin::ModPlugin 1 "<<std::endl;
+        //std::cout<<" ModPlugin::ModPlugin 1 "<<std::endl;
     }
 
     ModPlugin::ModPlugin(void const* serialData, size_t serialLength) 
     {
-        std::cout<<" ModPlugin::ModPlugin 2 "<<std::endl;
-        std::cout<<"---------------------"<<serialLength<<std::endl;
+       // std::cout<<" ModPlugin::ModPlugin 2 "<<std::endl;
+        //std::cout<<"---------------------"<<serialLength<<std::endl;
         char const* d = reinterpret_cast<char const*>(serialData);
         char const* a = d;
         bias_  = read<int>(d);
@@ -73,7 +73,7 @@ namespace plugin
         write(d, bias_);
         write(d, batch_);
         assert(d == a+ getSerializationSize());
-        std::cout<<"ModPlugin::serialize"<<std::endl;
+        //std::cout<<"ModPlugin::serialize"<<std::endl;
     }
 
     bool ModPlugin::supportsFormatCombination(int pos, const nvinfer1::PluginTensorDesc* inOut,
@@ -174,7 +174,7 @@ namespace plugin
     */
 
     ModPluginCreator::ModPluginCreator() {
-        std::cout<< "ModPluginCreator::ModPluginCreator"<<std::endl;
+        //std::cout<< "ModPluginCreator::ModPluginCreator"<<std::endl;
         mPluginAttributes.clear();
         mPluginAttributes.emplace_back("fmod", nullptr, PluginFieldType::kINT32, 1);
         mFC.nbFields = mPluginAttributes.size();
@@ -183,32 +183,32 @@ namespace plugin
 
     const char* ModPluginCreator::getPluginName() const noexcept
     {
-        std::cout<< "ModPluginCreator::getPluginName"<<std::endl;
+        //std::cout<< "ModPluginCreator::getPluginName"<<std::endl;
         return PLUGIN_NAME;
     }
 
     const char* ModPluginCreator::getPluginVersion() const noexcept 
     {
-        std::cout<< "ModPluginCreator::getPluginVersion"<<std::endl;
+        //std::cout<< "ModPluginCreator::getPluginVersion"<<std::endl;
         return PLUGIN_VERSION;
     }
  
     const PluginFieldCollection* ModPluginCreator::getFieldNames() noexcept
     {
-         std::cout<< "ModPluginCreator::getFieldNames"<<std::endl;
+        //std::cout<< "ModPluginCreator::getFieldNames"<<std::endl;
         return &mFC;
     }
 
     IPluginV2DynamicExt* ModPluginCreator::createPlugin(const char* name, const PluginFieldCollection* fc) noexcept
     {
-        std::cout<< "ModPluginCreator::createPlugin"<<std::endl;
+        //std::cout<< "ModPluginCreator::createPlugin"<<std::endl;
         const PluginField* fields = fc->fields;
-        std::cout<<"----------------------------------"<<std::endl;
-        std::cout << fc->nbFields << std::endl;
+       // std::cout<<"----------------------------------"<<std::endl;
+        //std::cout << fc->nbFields << std::endl;
         assert(fc->nbFields == 1);
         assert(fields[0].type == PluginFieldType::kINT32);
         int bias = *(static_cast<const int*>(fields[0].data));
-        std::cout<<"----------------------------------"<<bias<<std::endl;
+        //std::cout<<"----------------------------------"<<bias<<std::endl;
         ModPlugin* fmod = new ModPlugin(bias);
         fmod->setPluginNamespace(mNamespace.c_str());
         fmod->initialize();
@@ -219,7 +219,7 @@ namespace plugin
     IPluginV2DynamicExt* ModPluginCreator::deserializePlugin(
         const char* name, const void* serialData, size_t serialLength) noexcept
     {
-        std::cout<< "ModPluginCreator::deserializePlugin"<<std::endl;
+        //std::cout<< "ModPluginCreator::deserializePlugin"<<std::endl;
         ModPlugin* fmod = new ModPlugin(serialData,serialLength);
         fmod->setPluginNamespace(mNamespace.c_str());
         fmod->initialize();
@@ -229,13 +229,13 @@ namespace plugin
 
     void ModPluginCreator::setPluginNamespace(const char* libNamespace) noexcept
     {
-        std::cout<< "ModPluginCreator::setPluginNamespace"<<std::endl;
+        //std::cout<< "ModPluginCreator::setPluginNamespace"<<std::endl;
         mNamespace = libNamespace;
     }
 
     const char* ModPluginCreator::getPluginNamespace() const noexcept
     {
-        std::cout<< "ModPluginCreator::getPluginNamespace"<<std::endl;
+        //std::cout<< "ModPluginCreator::getPluginNamespace"<<std::endl;
         return mNamespace.c_str();
     }
 
