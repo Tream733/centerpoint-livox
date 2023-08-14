@@ -1,5 +1,5 @@
 # centerpoint-livox: An Lidar Object Detection project implemented by TensorRT
-CenterPoint model trained on livox dataset and deployed with TensorRT on ros2. Code is written according to the [project](https://github.com/Livox-SDK/livox_detection.git).
+CenterPoint model trained on livox dataset and deployed with TensorRT on ros2. Code is written according to this [project](https://github.com/Livox-SDK/livox_detection.git).
 
 Overall inference has three phases:
 * Conver points cloud into boolmap;  
@@ -14,7 +14,7 @@ Overall inference has three phases:
 the project is running inference on [LivoxOpenDataSet](https://www.livoxtech.com/cn/dataset).
 
 # Model
-The .pt file you can get in this project. the onnx file is provided by this project.
+The .pt file you can get in this [project](https://github.com/Livox-SDK/livox_detection.git). the onnx file is provided by this project.
 You can also get the onnx file by yourself through programming, but you have to consider the problem that onnx does not support atan2.
 
 # Prerequisites
