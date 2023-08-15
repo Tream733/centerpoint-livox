@@ -118,25 +118,25 @@ PostprocessCuda::PostprocessCuda( const float min_x_range,
   GPU_CHECK(cudaMalloc((void**)&dev_res_score_, sizeof(float) * max_obj_));
   GPU_CHECK(cudaMalloc((void**)&dev_res_cls_, sizeof(int) * max_obj_));
   GPU_CHECK(cudaMalloc((void**)&dev_res_box_, sizeof(float) * max_obj_ * kBoxBlockSize));
-  GPU_CHECK(cudaMalloc((void**)&dev_res_sorted_indices_, sizeof(int) * max_obj_));
+  // GPU_CHECK(cudaMalloc((void**)&dev_res_sorted_indices_, sizeof(int) * max_obj_));
   GPU_CHECK(cudaMalloc((void**)&dev_res_box_num_, sizeof(int)));
   GPU_CHECK(cudaMallocHost((void**)&host_res_box_, sizeof(float) * max_obj_ * kBoxBlockSize));
   GPU_CHECK(cudaMallocHost((void**)&host_res_score_, sizeof(float) * max_obj_));
   GPU_CHECK(cudaMallocHost((void**)&host_res_cls_, sizeof(int) * max_obj_));
-  GPU_CHECK(cudaMallocHost((void**)&host_res_sorted_indices_, sizeof(int) * max_obj_));
+  // GPU_CHECK(cudaMallocHost((void**)&host_res_sorted_indices_, sizeof(int) * max_obj_));
   GPU_CHECK(cudaMallocHost((void**)&host_keep_data_, sizeof(long) * max_obj_));
 
   GPU_CHECK(cudaMemset(dev_res_score_, 0.f, sizeof(float) * max_obj_));
   GPU_CHECK(cudaMemset(dev_res_cls_, 0, sizeof(int) * max_obj_));
   GPU_CHECK(cudaMemset(dev_res_box_, 0.f, sizeof(float) * max_obj_ * kBoxBlockSize));
   GPU_CHECK(cudaMemset(dev_res_box_num_, 0, sizeof(int)));
-  GPU_CHECK(cudaMemset(dev_res_sorted_indices_, 0, sizeof(int) * max_obj_));
+  // GPU_CHECK(cudaMemset(dev_res_sorted_indices_, 0, sizeof(int) * max_obj_));
   
   GPU_CHECK(cudaMemset(host_res_box_, 0.f, sizeof(float) * max_obj_ * kBoxBlockSize));
   GPU_CHECK(cudaMemset(host_res_score_, 0.f, sizeof(float) * max_obj_));
   GPU_CHECK(cudaMemset(host_res_cls_, 0, sizeof(int) * max_obj_));
 
-  GPU_CHECK(cudaMemset(host_res_sorted_indices_, 0, sizeof(int) * max_obj_));
+  // GPU_CHECK(cudaMemset(host_res_sorted_indices_, 0, sizeof(int) * max_obj_));
   GPU_CHECK(cudaMemset(host_keep_data_, 0L, sizeof(long) * max_obj_));
 
   iou3d_nms_cuda_.reset(new Iou3dNmsCuda(nms_overlap_thresh_));
@@ -167,16 +167,15 @@ void PostprocessCuda::DoPostprocessCuda(
   int box_num_pre = 0;
   GPU_CHECK(cudaMemcpy(&box_num_pre, dev_res_box_num_, sizeof(int), cudaMemcpyDeviceToHost));
   if(box_num_pre > 0) {
-    thrust::sequence(thrust::device, dev_res_sorted_indices_, dev_res_sorted_indices_ + box_num_pre);
-    thrust::sort_by_key(thrust::device,
-                        dev_res_score_,
-                        dev_res_score_ + box_num_pre,
-                        dev_res_sorted_indices_,
-                        thrust::greater<float>());
+    // thrust::sequence(thrust::device, dev_res_sorted_indices_, dev_res_sorted_indices_ + box_num_pre);
+    // thrust::sort_by_key(thrust::device,
+    //                     dev_res_score_,
+    //                     dev_res_score_ + box_num_pre,
+    //                     dev_res_sorted_indices_,
+    //                     thrust::greater<float>());
 
     int box_num_post = iou3d_nms_cuda_->DoIou3dNms(box_num_pre,
                                                    dev_res_box_, 
-                                                   dev_res_sorted_indices_,
                                                    host_keep_data_);
 
     box_num_post = box_num_post > max_obj_ ? max_obj_ : box_num_post;
@@ -186,21 +185,19 @@ void PostprocessCuda::DoPostprocessCuda(
     GPU_CHECK(cudaMemcpy(host_res_box_, dev_res_box_, sizeof(float) * box_num_pre * kBoxBlockSize, cudaMemcpyDeviceToHost));
     GPU_CHECK(cudaMemcpy(host_res_score_, dev_res_score_, sizeof(float) * box_num_pre, cudaMemcpyDeviceToHost));
     GPU_CHECK(cudaMemcpy(host_res_cls_, dev_res_cls_, sizeof(int) * box_num_pre, cudaMemcpyDeviceToHost));
-    GPU_CHECK(cudaMemcpy(host_res_sorted_indices_, dev_res_sorted_indices_, sizeof(int) * box_num_pre, cudaMemcpyDeviceToHost));
+    // GPU_CHECK(cudaMemcpy(host_res_sorted_indices_, dev_res_sorted_indices_, sizeof(int) * box_num_pre, cudaMemcpyDeviceToHost));
 
     for (auto j = 0; j < box_num_post; j++) {
       int k = host_keep_data_[j];
-      int idx = host_res_sorted_indices_[k];
-
       Box box;
-      box.x = host_res_box_[idx * kBoxBlockSize + 0];
-      box.y = host_res_box_[idx * kBoxBlockSize + 1];
-      box.z = host_res_box_[idx * kBoxBlockSize + 2];
-      box.l = host_res_box_[idx * kBoxBlockSize + 3];
-      box.w = host_res_box_[idx * kBoxBlockSize + 4];
-      box.h = host_res_box_[idx * kBoxBlockSize + 5];
-      box.r = host_res_box_[idx * kBoxBlockSize + 6];
-      box.label = host_res_cls_[idx];
+      box.x = host_res_box_[k * kBoxBlockSize + 0];
+      box.y = host_res_box_[k * kBoxBlockSize + 1];
+      box.z = host_res_box_[k * kBoxBlockSize + 2];
+      box.l = host_res_box_[k * kBoxBlockSize + 3];
+      box.w = host_res_box_[k * kBoxBlockSize + 4];
+      box.h = host_res_box_[k * kBoxBlockSize + 5];
+      box.r = host_res_box_[k * kBoxBlockSize + 6];
+      box.label = host_res_cls_[k];
       box.score = host_res_score_[k];
       box.z -= box.h * 0.5; // bottom height
       out_detections.push_back(box);
@@ -213,11 +210,11 @@ PostprocessCuda::~PostprocessCuda()
   GPU_CHECK(cudaFree(dev_res_box_));
   GPU_CHECK(cudaFree(dev_res_score_));
   GPU_CHECK(cudaFree(dev_res_cls_));
-  GPU_CHECK(cudaFree(dev_res_sorted_indices_));
+  // GPU_CHECK(cudaFree(dev_res_sorted_indices_));
   GPU_CHECK(cudaFree(dev_res_box_num_));
   GPU_CHECK(cudaFreeHost(host_res_box_));
   GPU_CHECK(cudaFreeHost(host_res_score_));
   GPU_CHECK(cudaFreeHost(host_res_cls_));
-  GPU_CHECK(cudaFreeHost(host_res_sorted_indices_));
+  // GPU_CHECK(cudaFreeHost(host_res_sorted_indices_));
   GPU_CHECK(cudaFreeHost(host_keep_data_));
 }

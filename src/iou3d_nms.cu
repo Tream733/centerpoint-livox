@@ -410,7 +410,7 @@ void Iou3dNmsCuda::nmsNormalLauncher(const float *boxes, unsigned long long * ma
     nms_normal_kernel<<<blocks, threads>>>(boxes_num, nms_overlap_thresh, boxes, mask);
 }
 
-int Iou3dNmsCuda::DoIou3dNms(const int box_num_pre,const float* res_box,const int* res_sorted_indices,long* host_keep_data)
+int Iou3dNmsCuda::DoIou3dNms(const int box_num_pre,const float* res_box,long* host_keep_data)
 {
   const int col_blocks = DIVUP(box_num_pre, THREADS_PER_BLOCK_NMS);
   unsigned long long *mask_data = NULL;

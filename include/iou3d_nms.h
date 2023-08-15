@@ -23,7 +23,6 @@ class Iou3dNmsCuda {
 
   int DoIou3dNms(const int box_num_pre,
                  const float* res_box,
-                 const int* res_sorted_indices,
                  long* host_keep_data);
   
   void nmsNormalLauncher(const float *boxes, unsigned long long * mask, 
